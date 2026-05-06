@@ -284,3 +284,218 @@
   border-top: var(--border-base) solid var(--border-muted);
   margin-top: var(--space-6);
 }
+
+.form-actions--split {
+  justify-content: space-between;
+}
+
+/* ================================================================
+   ARCHIVE FORM LAYOUT
+   ================================================================ */
+.archive-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.archive-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.archive-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.archive-form__section-title {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  color: var(--red-border);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-base) solid var(--border-muted);
+}
+
+.archive-form__preview {
+  position: sticky;
+  top: var(--space-4);
+}
+
+/* ================================================================
+   FORM STATUS BAR
+   ================================================================ */
+.form-status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--bg-panel-dark);
+  border: var(--border-base) solid var(--border-muted);
+  border-radius: var(--radius-input);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.form-status-bar--error {
+  border-color: var(--red-border);
+  color: var(--danger-status);
+}
+
+.form-status-bar--success {
+  border-color: var(--border-strong);
+  color: var(--text-main);
+}
+
+.form-status-bar--loading {
+  border-color: var(--border-strong);
+  color: var(--text-muted);
+}
+
+/* ================================================================
+   UPLOAD ZONE — FILE INPUT HIDING
+   ================================================================ */
+.upload-zone {
+  position: relative;
+}
+
+.upload-zone input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ================================================================
+   COVER UPLOAD
+   ================================================================ */
+.cover-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cover-upload__preview {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background-color: var(--bg-panel-dark);
+  border: var(--border-base) solid var(--border-muted);
+  border-radius: var(--radius-input);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-upload__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-upload__meta {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cover-upload__status {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cover-upload__status--uploading {
+  color: var(--text-muted);
+}
+
+.cover-upload__status--error {
+  color: var(--danger-status);
+}
+
+.cover-upload__status--success {
+  color: var(--text-main);
+}
+
+/* ================================================================
+   FIELD ERRORS
+   ================================================================ */
+.field-error-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field-error {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--danger-status);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.field-error::before {
+  content: '▸ ';
+}
+
+/* ================================================================
+   FORM VALIDATION SUMMARY
+   ================================================================ */
+.form-validation-summary {
+  border: var(--border-base) solid var(--red-border);
+  border-radius: var(--radius-panel);
+  background-color: var(--red-dark);
+  padding: var(--space-4);
+}
+
+.form-validation-summary__title {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  color: var(--red-border);
+  margin-bottom: var(--space-2);
+}
+
+.form-validation-summary__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-validation-summary__item {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--danger-status);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.form-validation-summary__item::before {
+  content: '▸ ';
+}

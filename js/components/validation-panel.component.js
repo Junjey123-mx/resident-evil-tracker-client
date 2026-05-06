@@ -61,3 +61,53 @@ export function createValidationPanel(messages = [], { title = 'ERRORES DE VALID
   ${createValidationList(normalized)}
 </div>`.trim();
 }
+
+export function normalizeFieldErrors(errorOrMessages) {
+  const fieldErrors = {};
+  let rawDetail = null;
+
+  if (Array.isArray(errorOrMessages)) {
+    rawDetail = errorOrMessages;
+  } else if (errorOrMessages && typeof errorOrMessages === 'object') {
+    const src = errorOrMessages.data || errorOrMessages;
+    if (Array.isArray(src)) {
+      rawDetail = src;
+    } else if (src.detail && Array.isArray(src.detail)) {
+      rawDetail = src.detail;
+    }
+  }
+
+  if (!rawDetail) return fieldErrors;
+
+  for (const item of rawDetail) {
+    if (item && typeof item === 'object' && item.msg && Array.isArray(item.loc) && item.loc.length > 1) {
+      const field = item.loc.slice(1).join('.');
+      if (field) {
+        if (!fieldErrors[field]) fieldErrors[field] = [];
+        fieldErrors[field].push(item.msg);
+      }
+    }
+  }
+
+  return fieldErrors;
+}
+
+export function createFieldErrorList(errors = []) {
+  if (!errors || errors.length === 0) return '';
+  const items = errors
+    .map(e => `<li class="field-error">${escapeHtml(String(e))}</li>`)
+    .join('');
+  return `<ul class="field-error-list">${items}</ul>`;
+}
+
+export function createFormValidationSummary(errorOrMessages, { title = 'ERRORES DE VALIDACIÓN' } = {}) {
+  const normalized = normalizeValidationMessages(errorOrMessages);
+  if (normalized.length === 0) return '';
+  const items = normalized
+    .map(m => `<li class="form-validation-summary__item">${escapeHtml(m)}</li>`)
+    .join('');
+  return `<div class="form-validation-summary">
+  <div class="form-validation-summary__title">${escapeHtml(title)}</div>
+  <ul class="form-validation-summary__list">${items}</ul>
+</div>`.trim();
+}
