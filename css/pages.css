@@ -1,4 +1,35 @@
 /* ================================================================
+   PAGE HEADER TYPOGRAPHY
+   ================================================================ */
+.page-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--red-border);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  margin-bottom: var(--space-1);
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--text-main);
+  line-height: var(--line-height-tight);
+}
+
+.page-subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  margin-top: var(--space-2);
+}
+
+/* ================================================================
    DASHBOARD PAGE
    ================================================================ */
 .dashboard-header {
