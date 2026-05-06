@@ -46,6 +46,91 @@
 }
 
 /* ================================================================
+   DASHBOARD — TIMELINE & TOP RATED
+   ================================================================ */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-base) solid var(--border-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.timeline-item:last-child {
+  border-bottom: none;
+}
+
+.timeline-item__year {
+  color: var(--red-border);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+  flex-shrink: 0;
+  min-width: 40px;
+}
+
+.timeline-item__label {
+  color: var(--text-soft);
+  flex: 1;
+}
+
+.timeline-item__count {
+  color: var(--text-muted);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.top-rated-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-rated-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-base) solid var(--border-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.top-rated-item:last-child {
+  border-bottom: none;
+}
+
+.top-rated-item__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.top-rated-item__right {
+  flex-shrink: 0;
+}
+
+.top-rated-rank {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.top-rated-item__title {
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================
    ARCHIVE / GAMES LIST PAGE
    ================================================================ */
 .archive-toolbar {
