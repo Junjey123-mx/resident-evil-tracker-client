@@ -1,9 +1,0 @@
-.git
-.gitignore
-README.md
-assets/screenshots/drafts
-.env
-.env.local
-*.log
-tmp
-temp
