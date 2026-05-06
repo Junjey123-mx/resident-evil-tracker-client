@@ -1,0 +1,213 @@
+/* ================================================================
+   DASHBOARD PAGE
+   ================================================================ */
+.dashboard-header {
+  margin-bottom: var(--space-8);
+}
+
+.dashboard-header__sub {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  margin-top: var(--space-2);
+}
+
+/* ================================================================
+   ARCHIVE / GAMES LIST PAGE
+   ================================================================ */
+.archive-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--bg-panel);
+  border: var(--border-base) solid var(--border-muted);
+  border-radius: var(--radius-panel);
+}
+
+.archive-toolbar__left,
+.archive-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.archive-count {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+}
+
+.archive-count__num {
+  color: var(--text-main);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ================================================================
+   GAME DETAIL PAGE
+   ================================================================ */
+.game-detail__hero {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-8);
+  margin-bottom: var(--space-8);
+  align-items: flex-start;
+}
+
+.game-detail__cover {
+  width: 200px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: var(--border-base) solid var(--border-muted);
+  border-radius: var(--radius-card);
+  background-color: var(--bg-panel-dark);
+  display: block;
+}
+
+.game-detail__cover-placeholder {
+  width: 200px;
+  aspect-ratio: 3 / 4;
+  background-color: var(--bg-panel-dark);
+  border: var(--border-base) dashed var(--border-strong);
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+}
+
+.game-detail__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.game-detail__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-main);
+}
+
+.game-detail__meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.game-detail__description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  color: var(--text-soft);
+  line-height: var(--line-height-relaxed);
+  max-width: 640px;
+}
+
+/* ================================================================
+   FORM PAGES (CREATE / EDIT)
+   ================================================================ */
+.form-page {
+  max-width: 720px;
+}
+
+.form-page__header {
+  margin-bottom: var(--space-8);
+}
+
+.form-page__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-main);
+}
+
+.form-page__subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  margin-top: var(--space-2);
+}
+
+/* ================================================================
+   TOAST NOTIFICATIONS
+   ================================================================ */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--bg-panel);
+  border: var(--border-base) solid var(--border-strong);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  min-width: 280px;
+  max-width: 400px;
+  box-shadow: var(--shadow-md);
+  pointer-events: all;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.toast--success { border-left-color: var(--green-status); }
+.toast--error   { border-left-color: var(--red-border); }
+.toast--warning { border-left-color: var(--warning-status); }
+
+.toast__message {
+  flex: 1;
+  color: var(--text-soft);
+  line-height: var(--line-height-snug);
+}
+
+.toast__close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+
+.toast__close:hover {
+  color: var(--text-main);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(16px); }
+}
+
+.toast--enter { animation: toast-in  var(--transition-base) forwards; }
+.toast--exit  { animation: toast-out var(--transition-base) forwards; }

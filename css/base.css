@@ -1,0 +1,179 @@
+/* ================================================================
+   RESET
+   ================================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+/* ================================================================
+   BODY + SCANLINES
+   ================================================================ */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent calc(var(--scanline-size) - 1px),
+    rgba(0, 0, 0, var(--scanline-opacity)) calc(var(--scanline-size) - 1px),
+    rgba(0, 0, 0, var(--scanline-opacity)) var(--scanline-size)
+  );
+  pointer-events: none;
+  z-index: var(--z-scanlines);
+}
+
+/* ================================================================
+   HEADINGS
+   ================================================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--text-main);
+}
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5 { font-size: var(--font-size-md); }
+h6 { font-size: var(--font-size-base); }
+
+/* ================================================================
+   BODY TEXT
+   ================================================================ */
+p {
+  font-family: var(--font-body);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-soft);
+}
+
+/* ================================================================
+   LINKS
+   ================================================================ */
+a {
+  color: var(--red-border);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--text-soft);
+}
+
+/* ================================================================
+   CODE
+   ================================================================ */
+code, pre, .mono {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+pre {
+  background-color: var(--bg-panel-dark);
+  border: var(--border-base) solid var(--border-muted);
+  padding: var(--space-4);
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* ================================================================
+   LABEL UTILITY
+   ================================================================ */
+.label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ================================================================
+   SELECTION
+   ================================================================ */
+::selection {
+  background-color: var(--red-dark);
+  color: var(--text-main);
+}
+
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--red-main);
+}
+
+/* ================================================================
+   FOCUS
+   ================================================================ */
+:focus-visible {
+  outline: 1px solid var(--red-border);
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   MISC RESETS
+   ================================================================ */
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+hr {
+  border: none;
+  border-top: var(--border-base) solid var(--border-muted);
+  margin: var(--space-6) 0;
+}
+
+.divider--red {
+  border-top-color: var(--red-border);
+}
