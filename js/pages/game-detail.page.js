@@ -1,6 +1,6 @@
 import { mountSidebar }           from '../components/sidebar.component.js';
 import { mountStatusStrip }        from '../components/status-strip.component.js';
-import { getArchiveEntryById }     from '../services/archive-entry.service.js';
+import { getArchiveEntryById, deleteArchiveEntry } from '../services/archive-entry.service.js';
 import {
   getRatingBySeriesId,
   createRating,
@@ -497,8 +497,25 @@ async function init() {
   ${buildActivityPanel(activityItems, activityError)}
 </div>`;
 
-  document.getElementById('btn-delete')?.addEventListener('click', () => {
-    showInfo('LA ELIMINACIÓN SE IMPLEMENTARÁ EN UNA TAREA POSTERIOR.');
+  document.getElementById('btn-delete')?.addEventListener('click', async () => {
+    if (!window.confirm('¿Eliminar este registro del archivo? Esta acción no se puede deshacer.')) return;
+
+    const btn = document.getElementById('btn-delete');
+    if (btn) { btn.disabled = true; btn.textContent = 'ELIMINANDO...'; }
+
+    try {
+      await deleteArchiveEntry(id);
+      showSuccess('Registro eliminado correctamente.');
+      window.location.href = 'games.html';
+    } catch (err) {
+      if (btn) { btn.disabled = false; btn.textContent = 'ELIMINAR'; }
+      const status = err?.status;
+      showError(
+        status === 404
+          ? 'El registro ya no existe o fue eliminado.'
+          : err?.message || 'No se pudo eliminar el registro.'
+      );
+    }
   });
 
   wireRatingSection(id);

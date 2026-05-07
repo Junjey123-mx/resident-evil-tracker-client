@@ -1,6 +1,6 @@
 import { mountSidebar }       from '../components/sidebar.component.js';
 import { mountStatusStrip }   from '../components/status-strip.component.js';
-import { listArchiveEntries } from '../services/archive-entry.service.js';
+import { listArchiveEntries, deleteArchiveEntry } from '../services/archive-entry.service.js';
 import { createArchiveGrid }  from '../components/archive-grid.component.js';
 import { createPagination }   from '../components/pagination.component.js';
 import { createStatsGrid }    from '../components/stat-card.component.js';
@@ -14,7 +14,7 @@ import {
   getNumberQueryParam,
   setQueryParams,
 } from '../core/query-params.js';
-import { showError, showInfo } from '../core/notifications.js';
+import { showError, showSuccess, showInfo } from '../core/notifications.js';
 
 mountSidebar({ activePage: 'games' });
 mountStatusStrip({ pageLabel: 'ARCHIVO' });
@@ -314,11 +314,47 @@ function attachEvents(root) {
     document.getElementById('archive-grid-area')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  // Delete button (delegation on root — no DELETE real)
-  root.addEventListener('click', (e) => {
+  // Delete button (delegation on root)
+  const deletingIds = new Set();
+  root.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-action="delete"]');
     if (!btn) return;
-    showInfo('LA ELIMINACIÓN SE IMPLEMENTARÁ EN UNA TAREA POSTERIOR.');
+
+    const rawId = btn.dataset.id;
+    const id    = Number(rawId);
+    if (!Number.isFinite(id) || id <= 0) {
+      showError('ID de registro inválido.');
+      return;
+    }
+    if (deletingIds.has(id)) return;
+    if (!window.confirm('¿Eliminar este registro del archivo? Esta acción no se puede deshacer.')) return;
+
+    deletingIds.add(id);
+    btn.disabled = true;
+
+    try {
+      await deleteArchiveEntry(id);
+      showSuccess('Registro eliminado correctamente.');
+      await loadData(currentParams);
+      if (currentParams.page > 1) {
+        const gridEl = document.getElementById('archive-grid-area');
+        if (gridEl && gridEl.querySelector('.empty-state')) {
+          currentParams = { ...currentParams, page: currentParams.page - 1 };
+          setQueryParams(currentParams);
+          loadData(currentParams);
+        }
+      }
+    } catch (err) {
+      btn.disabled = false;
+      const status = err?.status;
+      showError(
+        status === 404
+          ? 'El registro ya no existe o fue eliminado.'
+          : err?.message || 'No se pudo eliminar el registro.'
+      );
+    } finally {
+      deletingIds.delete(id);
+    }
   });
 }
 
