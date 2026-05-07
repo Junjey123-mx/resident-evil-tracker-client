@@ -36,6 +36,7 @@ export function createArchiveCard(entry) {
   if (!entry) return '';
 
   const id         = entry.id != null ? encodeURIComponent(entry.id) : null;
+  const rawId      = entry.id != null ? escapeHtml(String(entry.id)) : '';
   const detailHref = id ? `game-detail.html?id=${id}` : '#';
   const editHref   = id ? `edit-game.html?id=${id}`   : '#';
   const title      = escapeHtml(entry.title || 'SIN TÍTULO');
@@ -61,6 +62,10 @@ export function createArchiveCard(entry) {
   const threatBadge = entry.threat_level_label ? createThreatBadge(entry.threat_level_label, entry.threat_level_label) : '';
   const badgesHtml  = [catBadge, statusBadge, threatBadge].filter(Boolean).join('');
 
+  const deleteBtn = rawId
+    ? `<button type="button" class="btn btn--danger btn--sm" data-action="delete" data-id="${rawId}">ELIMINAR</button>`
+    : '';
+
   return `<article class="card card--interactive card--cover">
   ${coverHtml}
   <div class="card__body stack stack--3">
@@ -75,6 +80,7 @@ export function createArchiveCard(entry) {
   <div class="card__footer">
     <a href="${detailHref}" class="btn btn--ghost btn--sm">VER DETALLE</a>
     <a href="${editHref}" class="btn btn--secondary btn--sm">EDITAR</a>
+    ${deleteBtn}
   </div>
 </article>`.trim();
 }
