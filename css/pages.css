@@ -386,6 +386,34 @@
 }
 
 /* ================================================================
+   GAME DETAIL — RATING FORM
+   ================================================================ */
+.rating-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: var(--border-base) solid var(--border-muted);
+}
+
+.rating-form__grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.rating-form__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rating-form__validation:empty {
+  display: none;
+}
+
+/* ================================================================
    FORM PAGES (CREATE / EDIT)
    ================================================================ */
 .form-page {

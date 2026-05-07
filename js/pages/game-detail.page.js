@@ -1,7 +1,12 @@
 import { mountSidebar }           from '../components/sidebar.component.js';
 import { mountStatusStrip }        from '../components/status-strip.component.js';
 import { getArchiveEntryById }     from '../services/archive-entry.service.js';
-import { getRatingBySeriesId }     from '../services/rating.service.js';
+import {
+  getRatingBySeriesId,
+  createRating,
+  updateRating,
+  deleteRating,
+}                                  from '../services/rating.service.js';
 import { listActivityBySeriesId }  from '../services/activity.service.js';
 import { getIdFromQuery }          from '../core/query-params.js';
 import { createActivityList }      from '../components/activity-list.component.js';
@@ -17,6 +22,10 @@ import {
   createEmptyState,
 } from '../components/empty-state.component.js';
 import {
+  createFormValidationSummary,
+  normalizeValidationMessages,
+} from '../components/validation-panel.component.js';
+import {
   formatText,
   formatDate,
   formatYear,
@@ -24,7 +33,7 @@ import {
   formatSurvivalIndex,
   formatFileCode,
 } from '../core/formatters.js';
-import { showError, showInfo } from '../core/notifications.js';
+import { showError, showSuccess, showInfo } from '../core/notifications.js';
 
 mountSidebar({ activePage: 'games' });
 mountStatusStrip({ pageLabel: 'DETALLE' });
@@ -143,14 +152,61 @@ function buildArchivePanel(entry) {
   return sectionPanel('INFORMACIÓN DEL ARCHIVO', `<div class="detail-data-list">${rows}</div>`);
 }
 
-// ------------------------------------------------------------------ Rating personal
+// ------------------------------------------------------------------ Rating — form HTML builder
+function buildRatingFormHtml(rating) {
+  const hasRating = !!rating;
+  const scoreNum  = hasRating ? Math.round(Number(rating.rating_score ?? rating.score ?? 0)) : 0;
+  const reviewVal = hasRating ? (rating.personal_review ?? rating.review ?? '') : '';
+
+  let scoreOptions = '<option value="">-- SELECCIONAR --</option>';
+  for (let i = 1; i <= 10; i++) {
+    const sel = (scoreNum === i) ? ' selected' : '';
+    scoreOptions += `<option value="${i}"${sel}>${i} / 10</option>`;
+  }
+
+  const submitLabel = hasRating ? 'ACTUALIZAR RATING' : 'GUARDAR RATING';
+  const deleteBtn   = hasRating
+    ? `<button type="button" id="btn-rating-delete" class="btn btn--danger btn--sm">ELIMINAR RATING</button>`
+    : '';
+
+  return `<div class="rating-form">
+  <div class="archive-form__section-title">CALIFICAR REGISTRO</div>
+  <div id="rating-validation" class="rating-form__validation"></div>
+  <form id="rating-form" class="form" novalidate>
+    <div class="rating-form__grid">
+      <div class="form-group">
+        <label for="rating-score" class="form-label form-label--required">PUNTUACIÓN</label>
+        <select id="rating-score" name="score" class="form-select" required>
+          ${scoreOptions}
+        </select>
+        <span class="form-hint">Del 1 al 10</span>
+      </div>
+      <div class="form-group">
+        <label for="rating-review" class="form-label">RESEÑA PERSONAL</label>
+        <textarea id="rating-review" name="review" class="form-textarea" maxlength="500" placeholder="Escribe tu reseña personal...">${escapeHtml(String(reviewVal))}</textarea>
+        <span class="form-hint">Opcional. Máximo 500 caracteres.</span>
+      </div>
+    </div>
+    <div class="rating-form__actions">
+      <button type="submit" id="btn-rating-submit" class="btn btn--primary btn--sm">${submitLabel}</button>
+      ${deleteBtn}
+    </div>
+  </form>
+</div>`;
+}
+
+// ------------------------------------------------------------------ Rating personal — panel builder
 function buildRatingPanel(rating) {
   if (!rating) {
-    return sectionPanel('RATING PERSONAL', createEmptyState({
-      title:   'SIN RATING PERSONAL',
-      message: 'Este registro todavía no tiene calificación personal.',
-      icon:    '◎',
-    }));
+    const body = `<div class="stack stack--4">
+  ${createEmptyState({
+    title:   'SIN RATING PERSONAL',
+    message: 'Este registro todavía no tiene calificación personal.',
+    icon:    '◎',
+  })}
+  ${buildRatingFormHtml(null)}
+</div>`;
+    return `<div id="rating-panel-root">${sectionPanel('RATING PERSONAL', body)}</div>`;
   }
 
   const score   = rating.rating_score ?? rating.score ?? null;
@@ -165,7 +221,7 @@ function buildRatingPanel(rating) {
     ? `<div class="review-box"><p>${escapeHtml(String(review))}</p></div>`
     : `<p class="label">SIN RESEÑA PERSONAL.</p>`;
 
-  const bodyHtml = `<div class="stack stack--4">
+  const summaryHtml = `<div class="stack stack--4">
   <div class="detail-data-list">
     <div class="detail-data-item">
       <span class="detail-data-label">PUNTUACIÓN</span>
@@ -181,7 +237,160 @@ function buildRatingPanel(rating) {
   </div>
 </div>`;
 
-  return sectionPanel('RATING PERSONAL', bodyHtml);
+  const body = `<div class="stack stack--4">
+  ${summaryHtml}
+  ${buildRatingFormHtml(rating)}
+</div>`;
+
+  return `<div id="rating-panel-root">${sectionPanel('RATING PERSONAL', body)}</div>`;
+}
+
+// ------------------------------------------------------------------ Rating — client-side validation
+function validateRatingClientSide(score, review) {
+  const errors = [];
+  if (!score) {
+    errors.push('La puntuación es requerida.');
+  } else {
+    const n = Number(score);
+    if (!Number.isFinite(n) || n < 1 || n > 10) {
+      errors.push('La puntuación debe ser un número entre 1 y 10.');
+    }
+  }
+  if (review && String(review).length > 500) {
+    errors.push('La reseña no puede superar los 500 caracteres.');
+  }
+  return errors;
+}
+
+// ------------------------------------------------------------------ Rating — re-render panel only
+async function rerenderRatingPanel(seriesId) {
+  const root = document.getElementById('rating-panel-root');
+  if (!root) return;
+
+  root.innerHTML = sectionPanel('RATING PERSONAL', createLoadingState('ACTUALIZANDO RATING...'));
+
+  let rating = null;
+  try {
+    rating = await getRatingBySeriesId(seriesId);
+  } catch (err) {
+    if (err?.status !== 404) {
+      root.innerHTML = sectionPanel('RATING PERSONAL', createErrorState({
+        title:   'ERROR AL CARGAR RATING',
+        message: 'No se pudo actualizar el panel de rating.',
+      }));
+      return;
+    }
+  }
+
+  const temp = document.createElement('div');
+  temp.innerHTML = buildRatingPanel(rating);
+  root.replaceWith(temp.firstElementChild);
+
+  wireRatingSection(seriesId);
+}
+
+// ------------------------------------------------------------------ Rating — delete handler
+async function handleRatingDelete(seriesId) {
+  if (!window.confirm('¿Eliminar el rating personal de este registro?')) return;
+
+  const deleteBtn = document.getElementById('btn-rating-delete');
+  const submitBtn = document.getElementById('btn-rating-submit');
+
+  if (deleteBtn) { deleteBtn.disabled = true; deleteBtn.textContent = 'ELIMINANDO...'; }
+  if (submitBtn) submitBtn.disabled = true;
+
+  try {
+    await deleteRating(seriesId);
+    showSuccess('Rating eliminado correctamente.');
+    await rerenderRatingPanel(seriesId);
+  } catch (err) {
+    if (err?.status === 404) {
+      showInfo('El rating ya no existía. Actualizando vista.');
+      await rerenderRatingPanel(seriesId);
+    } else {
+      if (deleteBtn) { deleteBtn.disabled = false; deleteBtn.textContent = 'ELIMINAR RATING'; }
+      if (submitBtn) submitBtn.disabled = false;
+      showError(err?.message || 'Error al eliminar el rating.');
+    }
+  }
+}
+
+// ------------------------------------------------------------------ Rating — submit handler
+async function handleRatingSubmit(seriesId, hasRating) {
+  const scoreEl      = document.getElementById('rating-score');
+  const reviewEl     = document.getElementById('rating-review');
+  const submitBtn    = document.getElementById('btn-rating-submit');
+  const validationEl = document.getElementById('rating-validation');
+
+  if (!scoreEl || !submitBtn || !validationEl) return;
+
+  const score  = scoreEl.value.trim();
+  const review = reviewEl ? reviewEl.value.trim() : '';
+
+  const errors = validateRatingClientSide(score, review);
+  if (errors.length > 0) {
+    validationEl.innerHTML = createFormValidationSummary(errors);
+    return;
+  }
+  validationEl.innerHTML = '';
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'GUARDANDO...';
+
+  const payload = { score: Number(score), review: review || null };
+
+  try {
+    if (hasRating) {
+      await updateRating(seriesId, payload);
+      showSuccess('Rating actualizado correctamente.');
+    } else {
+      await createRating(seriesId, payload);
+      showSuccess('Rating creado correctamente.');
+    }
+    await rerenderRatingPanel(seriesId);
+  } catch (err) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = hasRating ? 'ACTUALIZAR RATING' : 'GUARDAR RATING';
+
+    const status = err?.status;
+    if (status === 409) {
+      validationEl.innerHTML = createFormValidationSummary([
+        'Este registro ya tiene rating. Recarga o actualiza la calificación existente.',
+      ]);
+    } else if (status === 422) {
+      const msgs = normalizeValidationMessages(err?.data ?? err);
+      validationEl.innerHTML = createFormValidationSummary(
+        msgs.length > 0 ? msgs : ['Error de validación. Revisa los datos ingresados.']
+      );
+    } else if (status === 404 && hasRating) {
+      validationEl.innerHTML = createFormValidationSummary([
+        'El rating ya no existe. Actualizando vista.',
+      ]);
+      await rerenderRatingPanel(seriesId);
+    } else {
+      showError(err?.message || 'Error al guardar el rating.');
+    }
+  }
+}
+
+// ------------------------------------------------------------------ Rating — wire events
+function wireRatingSection(seriesId) {
+  const form = document.getElementById('rating-form');
+  if (!form) return;
+
+  const hasRating = !!document.getElementById('btn-rating-delete');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleRatingSubmit(seriesId, hasRating);
+  });
+
+  const deleteBtn = document.getElementById('btn-rating-delete');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', () => {
+      handleRatingDelete(seriesId);
+    });
+  }
 }
 
 // ------------------------------------------------------------------ Relacionados
@@ -230,7 +439,6 @@ async function init() {
 
   root.innerHTML = createLoadingState('CARGANDO DETALLE DEL ARCHIVO...');
 
-  // Validate id from URL
   const id = getIdFromQuery('id');
   if (!id || !Number.isFinite(id) || id <= 0) {
     root.innerHTML = createEmptyState({
@@ -243,14 +451,12 @@ async function init() {
     return;
   }
 
-  // Parallel fetch — rating and activity are optional
   const [entryResult, ratingResult, activityResult] = await Promise.allSettled([
     getArchiveEntryById(id),
     getRatingBySeriesId(id),
     listActivityBySeriesId(id),
   ]);
 
-  // Entry is required — any failure shows error page
   if (entryResult.status === 'rejected') {
     const err    = entryResult.reason;
     const status = err?.status ? ` [HTTP ${err.status}]` : '';
@@ -264,7 +470,6 @@ async function init() {
 
   const entry = entryResult.value;
 
-  // Rating: 404 = no rating yet (acceptable), other errors = warn in console
   let rating = null;
   if (ratingResult.status === 'fulfilled') {
     rating = ratingResult.value;
@@ -272,7 +477,6 @@ async function init() {
     console.warn('[game-detail] rating load error:', ratingResult.reason?.message);
   }
 
-  // Activity: any failure → show error state inside the section
   let activityItems = [];
   let activityError = null;
   if (activityResult.status === 'fulfilled') {
@@ -282,7 +486,6 @@ async function init() {
     activityError = activityResult.reason;
   }
 
-  // Render complete detail
   root.innerHTML = `<div class="stack stack--6">
   ${buildHero(entry, id)}
   <div class="grid grid--2">
@@ -294,10 +497,11 @@ async function init() {
   ${buildActivityPanel(activityItems, activityError)}
 </div>`;
 
-  // Delete button listener (no DELETE real)
   document.getElementById('btn-delete')?.addEventListener('click', () => {
     showInfo('LA ELIMINACIÓN SE IMPLEMENTARÁ EN UNA TAREA POSTERIOR.');
   });
+
+  wireRatingSection(id);
 }
 
 init();
