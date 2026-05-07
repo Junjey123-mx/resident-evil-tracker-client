@@ -12,29 +12,27 @@ function escapeHtml(value) {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: '',            label: 'SELECCIONAR...' },
-  { value: 'MAINLINE',    label: 'MAINLINE'        },
-  { value: 'SPINOFF',     label: 'SPINOFF'         },
-  { value: 'REMAKE',      label: 'REMAKE'          },
-  { value: 'REMASTER',    label: 'REMASTER'        },
-  { value: 'CANON_MEDIA', label: 'MEDIOS CANON'    },
-  { value: 'OTHER',       label: 'OTRO'            },
+  { value: '',            label: 'SELECCIONAR...'  },
+  { value: 'main_series', label: 'JUEGO PRINCIPAL' },
+  { value: 'remake',      label: 'REMAKE'          },
+  { value: 'prequel',     label: 'PRECUELA'        },
+  { value: 'spin_off',    label: 'SPIN-OFF'        },
+  { value: 'expansion',   label: 'EXPANSIÓN'       },
 ];
 
 const STATUS_OPTIONS = [
   { value: '',           label: 'SELECCIONAR...' },
-  { value: 'DRAFT',      label: 'BORRADOR'       },
-  { value: 'REGISTERED', label: 'REGISTRADO'     },
-  { value: 'ACTIVE',     label: 'ACTIVO'         },
-  { value: 'ARCHIVED',   label: 'ARCHIVADO'      },
+  { value: 'registered', label: 'REGISTRADO'    },
+  { value: 'pending',    label: 'PENDIENTE'     },
+  { value: 'archived',   label: 'ARCHIVADO'     },
 ];
 
 const THREAT_LEVEL_OPTIONS = [
   { value: '',         label: 'SELECCIONAR...' },
-  { value: 'LOW',      label: 'BAJO'           },
-  { value: 'MEDIUM',   label: 'MEDIO'          },
-  { value: 'HIGH',     label: 'ALTO'           },
-  { value: 'CRITICAL', label: 'CRÍTICO'        },
+  { value: 'low',      label: 'BAJO'           },
+  { value: 'medium',   label: 'MEDIO'          },
+  { value: 'high',     label: 'ALTO'           },
+  { value: 'critical', label: 'CRÍTICO'        },
 ];
 
 function createSelectOptions(options, selectedValue) {
@@ -64,7 +62,7 @@ export function getDefaultArchiveEntryValues() {
     chronology_order:        '',
     description:             '',
     category:                '',
-    status:                  'DRAFT',
+    status:                  '',
     threat_level:            '',
     display_score:           '',
     cover_image_url:         '',
