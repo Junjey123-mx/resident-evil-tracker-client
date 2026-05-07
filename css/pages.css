@@ -475,6 +475,7 @@
 .toast--success { border-left-color: var(--green-status); }
 .toast--error   { border-left-color: var(--red-border); }
 .toast--warning { border-left-color: var(--warning-status); }
+.toast--info    { border-left-color: var(--border-strong); }
 
 .toast__message {
   flex: 1;

@@ -458,11 +458,13 @@ async function init() {
   ]);
 
   if (entryResult.status === 'rejected') {
-    const err    = entryResult.reason;
-    const status = err?.status ? ` [HTTP ${err.status}]` : '';
+    const err   = entryResult.reason;
+    const is404 = err?.status === 404;
     root.innerHTML = createErrorState({
-      title:   'ERROR AL CARGAR EL REGISTRO',
-      message: `No se pudo cargar el detalle del registro.${status}`,
+      title:   is404 ? 'REGISTRO NO ENCONTRADO' : 'ERROR AL CARGAR EL REGISTRO',
+      message: is404
+        ? 'El registro solicitado no existe o fue eliminado.'
+        : `No se pudo cargar el detalle del registro.${err?.status ? ` [HTTP ${err.status}]` : ''}`,
     });
     showError(err?.message || 'Error al cargar el registro.');
     return;

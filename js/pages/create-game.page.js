@@ -24,7 +24,8 @@ mountSidebar({ activePage: 'create' });
 mountStatusStrip({ pageLabel: 'NUEVO REGISTRO' });
 
 // ------------------------------------------------------------------ State
-let blobUrl = null;
+let blobUrl     = null;
+let submitting  = false;
 
 // ------------------------------------------------------------------ Helpers
 function revokeBlobUrl() {
@@ -245,6 +246,7 @@ function attachEvents() {
 // ------------------------------------------------------------------ Submit
 async function handleSubmit(e) {
   e.preventDefault();
+  if (submitting) return;
 
   const rawValues    = readFormValues();
   const coverFile    = document.getElementById('cover-upload')?.files?.[0] ?? null;
@@ -254,7 +256,6 @@ async function handleSubmit(e) {
     setValidation(clientErrors);
     setStatusBar({ status: 'error', message: 'REVISA LOS CAMPOS REQUERIDOS.' });
     showError(clientErrors[0]);
-    // Focus first invalid field if possible
     const firstInvalid = document.querySelector(
       '#archive-form input:invalid, #archive-form select:invalid, #archive-form textarea:invalid'
     );
@@ -264,6 +265,7 @@ async function handleSubmit(e) {
 
   setValidation([]);
   setStatusBar({ status: 'loading' });
+  submitting = true;
   setSubmitLoading(true);
 
   // Exclude blob URL — cover comes from file upload, not a text field
@@ -277,6 +279,7 @@ async function handleSubmit(e) {
     const msgs = normalizeValidationMessages(err);
     setValidation(msgs.length ? msgs : [err?.message || 'Error al crear el registro.']);
     setStatusBar({ status: 'error', message: 'ERROR AL CREAR EL REGISTRO.' });
+    submitting = false;
     setSubmitLoading(false);
     showError(err?.message || 'Error al crear el registro.');
     return;
@@ -288,9 +291,12 @@ async function handleSubmit(e) {
   if (coverFile && createdId != null) {
     try {
       await uploadCover(createdId, coverFile);
-    } catch {
+    } catch (coverErr) {
       revokeBlobUrl();
-      showWarning('REGISTRO CREADO. La portada no pudo subirse. Puedes subirla desde la edición del registro.');
+      const coverMsg = coverErr?.status === 503
+        ? 'REGISTRO CREADO. El servicio de portadas no está disponible (503). Puedes subirla desde la edición.'
+        : 'REGISTRO CREADO. La portada no pudo subirse. Puedes subirla desde la edición del registro.';
+      showWarning(coverMsg);
       window.location.href = `game-detail.html?id=${encodeURIComponent(createdId)}`;
       return;
     }

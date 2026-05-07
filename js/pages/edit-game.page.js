@@ -31,6 +31,7 @@ mountStatusStrip({ pageLabel: 'EDITAR REGISTRO' });
 let entryId       = null;
 let originalEntry = null;
 let blobUrl       = null;
+let submitting    = false;
 
 // ------------------------------------------------------------------ escapeHtml
 function escapeHtml(value) {
@@ -347,6 +348,7 @@ function attachEvents() {
 // ------------------------------------------------------------------ Submit
 async function handleSubmit(e) {
   e.preventDefault();
+  if (submitting) return;
 
   const currentValues = getFormValues();
   const coverFile     = getCoverFile();
@@ -371,6 +373,7 @@ async function handleSubmit(e) {
 
   setValidation([]);
   setStatusBar({ status: 'loading', message: 'GUARDANDO CAMBIOS...' });
+  submitting = true;
   setSubmitLoading(true);
 
   // PUT only if there are field changes
@@ -384,6 +387,7 @@ async function handleSubmit(e) {
       const msgs = normalizeValidationMessages(err);
       setValidation(msgs.length ? msgs : [err?.message || 'Error al actualizar el registro.']);
       setStatusBar({ status: 'error', message: 'ERROR AL GUARDAR CAMBIOS.' });
+      submitting = false;
       setSubmitLoading(false);
       showError(err?.message || 'Error al actualizar el registro.');
       return;
@@ -394,9 +398,12 @@ async function handleSubmit(e) {
   if (hasFile) {
     try {
       await uploadCover(entryId, coverFile);
-    } catch {
+    } catch (coverErr) {
       revokeBlobUrl();
-      showWarning('El registro fue actualizado, pero la portada no pudo subirse. Puedes intentarlo de nuevo desde la edición.');
+      const coverMsg = coverErr?.status === 503
+        ? 'REGISTRO ACTUALIZADO. El servicio de portadas no está disponible (503). Puedes intentarlo desde la edición.'
+        : 'El registro fue actualizado, pero la portada no pudo subirse. Puedes intentarlo de nuevo desde la edición.';
+      showWarning(coverMsg);
       window.location.href = `game-detail.html?id=${encodeURIComponent(entryId)}`;
       return;
     }
@@ -432,11 +439,13 @@ async function init() {
   try {
     entry = await getArchiveEntryById(id);
   } catch (err) {
-    const status = err?.status ? ` [HTTP ${err.status}]` : '';
+    const is404 = err?.status === 404;
     root.innerHTML = `<div class="stack stack--4">
   ${createErrorState({
-    title:   'ERROR AL CARGAR EL REGISTRO',
-    message: `No se pudo cargar el registro para edición.${status}`,
+    title:   is404 ? 'REGISTRO NO ENCONTRADO' : 'ERROR AL CARGAR EL REGISTRO',
+    message: is404
+      ? 'El registro solicitado no existe o fue eliminado.'
+      : `No se pudo cargar el registro para edición.${err?.status ? ` [HTTP ${err.status}]` : ''}`,
   })}
   <div><a href="games.html" class="btn btn--ghost btn--sm">← VOLVER AL ARCHIVO</a></div>
 </div>`;

@@ -14,14 +14,16 @@ export function ensureToastContainer() {
 export function showToast(message, { type = 'info', duration = 4000, closeable = true } = {}) {
   const container = ensureToastContainer();
 
-  const typeModifier = ['success', 'error', 'warning'].includes(type) ? `toast--${type}` : '';
+  const safeMessage = (message != null && String(message).trim()) ? String(message) : 'Notificación.';
+  const safeType    = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+  const typeModifier = `toast--${safeType}`;
 
   const toast = document.createElement('div');
-  toast.className = ['toast', typeModifier, 'toast--enter'].filter(Boolean).join(' ');
+  toast.className = ['toast', typeModifier, 'toast--enter'].join(' ');
 
   const messageEl = document.createElement('span');
   messageEl.className = 'toast__message';
-  messageEl.textContent = message;
+  messageEl.textContent = safeMessage;
   toast.appendChild(messageEl);
 
   if (closeable) {

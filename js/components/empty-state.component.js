@@ -61,3 +61,19 @@ export function createConstructionState(moduleName = '') {
   </div>
 </div>`.trim();
 }
+
+export function createApiUnavailableState(message = 'No se pudo conectar con la API. Verifica que el backend esté activo en http://localhost:8000.') {
+  return createErrorState({ title: 'API NO DISPONIBLE', message });
+}
+
+export function createNotFoundState(message = 'El registro solicitado no existe o fue eliminado.') {
+  return createErrorState({ title: 'REGISTRO NO ENCONTRADO', message });
+}
+
+export function createValidationErrorState(message = 'La información enviada contiene errores de validación.') {
+  return createErrorState({ title: 'ERROR DE VALIDACIÓN', message });
+}
+
+export function createConfigErrorState(message = 'El servicio externo no está configurado o no está disponible.') {
+  return createErrorState({ title: 'ERROR DE CONFIGURACIÓN', message });
+}

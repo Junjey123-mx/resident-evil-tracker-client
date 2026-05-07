@@ -37,6 +37,7 @@ export function normalizeValidationMessages(errorOrMessages) {
       if (typeof errorOrMessages.detail === 'string') return [errorOrMessages.detail];
     }
     if (errorOrMessages.message) return [errorOrMessages.message];
+    if (typeof errorOrMessages.error === 'string' && errorOrMessages.error) return [errorOrMessages.error];
   }
 
   if (typeof errorOrMessages === 'string') return [errorOrMessages];
