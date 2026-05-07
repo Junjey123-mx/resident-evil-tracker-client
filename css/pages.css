@@ -301,6 +301,91 @@
 }
 
 /* ================================================================
+   GAME DETAIL PAGE — ADDITIONAL DETAIL CLASSES
+   ================================================================ */
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.detail-data-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-data-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-base) solid var(--border-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.detail-data-item:last-child {
+  border-bottom: none;
+}
+
+.detail-data-label {
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  min-width: 160px;
+}
+
+.detail-data-value {
+  color: var(--text-soft);
+  flex: 1;
+}
+
+.review-box {
+  background-color: var(--bg-panel-dark);
+  border: var(--border-base) solid var(--border-muted);
+  border-radius: var(--radius-input);
+  padding: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.review-box p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--text-soft);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-wrap;
+}
+
+.detail-related-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-related-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: var(--border-base) solid var(--border-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.detail-related-item:last-child {
+  border-bottom: none;
+}
+
+.detail-related-item__title {
+  color: var(--red-border);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================
    FORM PAGES (CREATE / EDIT)
    ================================================================ */
 .form-page {
