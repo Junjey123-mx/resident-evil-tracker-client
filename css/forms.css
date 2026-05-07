@@ -360,6 +360,11 @@
   color: var(--text-muted);
 }
 
+.form-status-bar--pending {
+  border-color: var(--red-border);
+  color: var(--red-border);
+}
+
 /* ================================================================
    UPLOAD ZONE — FILE INPUT HIDING
    ================================================================ */

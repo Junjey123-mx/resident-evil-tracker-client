@@ -56,18 +56,31 @@ function createFormGroup({ id, label, required = false, input, hint = '' }) {
 
 export function getDefaultArchiveEntryValues() {
   return {
-    title:             '',
-    file_code:         '',
-    release_year:      '',
-    original_platform: '',
-    main_protagonist:  '',
-    chronology_order:  '',
-    description:       '',
-    category:          '',
-    status:            'DRAFT',
-    threat_level:      '',
-    display_score:     '',
-    cover_image_url:   '',
+    title:                   '',
+    file_code:               '',
+    release_year:            '',
+    original_platform:       '',
+    main_protagonist:        '',
+    chronology_order:        '',
+    description:             '',
+    category:                '',
+    status:                  'DRAFT',
+    threat_level:            '',
+    display_score:           '',
+    cover_image_url:         '',
+    director:                '',
+    developer:               '',
+    genre:                   '',
+    engine:                  '',
+    umbrella_classification: '',
+    survival_index:          '',
+    players:                 '',
+    estimated_duration:      '',
+    chronology_era:          '',
+    alias_title:             '',
+    main_locations:          '',
+    threat_type:             '',
+    registered_platforms:    '',
   };
 }
 
@@ -76,11 +89,14 @@ export function normalizeArchiveFormValues(values = {}) {
   const stringFields = [
     'title', 'file_code', 'original_platform', 'main_protagonist',
     'description', 'cover_image_url', 'category', 'status', 'threat_level',
+    'director', 'developer', 'genre', 'engine', 'umbrella_classification',
+    'estimated_duration', 'chronology_era', 'alias_title', 'main_locations',
+    'threat_type', 'registered_platforms',
   ];
   for (const f of stringFields) {
     if (typeof v[f] === 'string') v[f] = v[f].trim() || null;
   }
-  const numericFields = ['release_year', 'chronology_order', 'display_score'];
+  const numericFields = ['release_year', 'chronology_order', 'display_score', 'survival_index', 'players'];
   for (const f of numericFields) {
     if (v[f] === '' || v[f] === null || v[f] === undefined) {
       v[f] = null;
@@ -200,7 +216,53 @@ export function createArchiveFormFields(entry = {}) {
     input: `<textarea class="form-textarea" id="field-description" name="description" placeholder="SINOPSIS Y DESCRIPCIÓN DEL ARCHIVO..." rows="4">${escapeHtml(e.description || '')}</textarea>` })}
 </div>`;
 
-  return [identSection, dataSection, classSection, descSection].join('\n');
+  const survivalVal  = e.survival_index != null && e.survival_index !== '' ? String(e.survival_index) : '';
+  const playersVal   = e.players        != null && e.players        !== '' ? String(e.players)        : '';
+
+  const extendedSection = `<div class="archive-form__section">
+  <div class="archive-form__section-title">DATOS EXTENDIDOS</div>
+  <div class="form-row">
+    ${createFormGroup({ id: 'field-director', label: 'DIRECTOR',
+      input: `<input class="form-input" type="text" id="field-director" name="director" value="${escapeHtml(e.director || '')}" placeholder="NOMBRE DEL DIRECTOR...">` })}
+    ${createFormGroup({ id: 'field-developer', label: 'DESARROLLADOR',
+      input: `<input class="form-input" type="text" id="field-developer" name="developer" value="${escapeHtml(e.developer || '')}" placeholder="CAPCOM...">` })}
+  </div>
+  <div class="form-row">
+    ${createFormGroup({ id: 'field-genre', label: 'GÉNERO',
+      input: `<input class="form-input" type="text" id="field-genre" name="genre" value="${escapeHtml(e.genre || '')}" placeholder="SURVIVAL HORROR...">` })}
+    ${createFormGroup({ id: 'field-engine', label: 'ENGINE',
+      input: `<input class="form-input" type="text" id="field-engine" name="engine" value="${escapeHtml(e.engine || '')}" placeholder="RE ENGINE...">` })}
+  </div>
+  <div class="form-row">
+    ${createFormGroup({ id: 'field-survival-index', label: 'SURVIVAL INDEX',
+      input: `<input class="form-input" type="number" id="field-survival-index" name="survival_index" value="${escapeHtml(survivalVal)}" placeholder="0-100" min="0" max="100">`,
+      hint: 'ÍNDICE DE SUPERVIVENCIA (0-100)' })}
+    ${createFormGroup({ id: 'field-players', label: 'JUGADORES',
+      input: `<input class="form-input" type="number" id="field-players" name="players" value="${escapeHtml(playersVal)}" placeholder="1" min="1">` })}
+  </div>
+  <div class="form-row">
+    ${createFormGroup({ id: 'field-estimated-duration', label: 'DURACIÓN ESTIMADA',
+      input: `<input class="form-input" type="text" id="field-estimated-duration" name="estimated_duration" value="${escapeHtml(e.estimated_duration || '')}" placeholder="8-10 horas...">` })}
+    ${createFormGroup({ id: 'field-umbrella-classification', label: 'CLASIFICACIÓN UMBRELLA',
+      input: `<input class="form-input" type="text" id="field-umbrella-classification" name="umbrella_classification" value="${escapeHtml(e.umbrella_classification || '')}" placeholder="CLASE A...">` })}
+  </div>
+  <div class="form-row">
+    ${createFormGroup({ id: 'field-chronology-era', label: 'ERA CRONOLÓGICA',
+      input: `<input class="form-input" type="text" id="field-chronology-era" name="chronology_era" value="${escapeHtml(e.chronology_era || '')}" placeholder="ERA T-VIRUS...">` })}
+    ${createFormGroup({ id: 'field-alias-title', label: 'TÍTULO ALTERNATIVO',
+      input: `<input class="form-input" type="text" id="field-alias-title" name="alias_title" value="${escapeHtml(e.alias_title || '')}" placeholder="BIO HAZARD...">` })}
+  </div>
+  <div class="form-row">
+    ${createFormGroup({ id: 'field-main-locations', label: 'LOCACIONES PRINCIPALES',
+      input: `<input class="form-input" type="text" id="field-main-locations" name="main_locations" value="${escapeHtml(e.main_locations || '')}" placeholder="RACCOON CITY...">` })}
+    ${createFormGroup({ id: 'field-threat-type', label: 'TIPO DE AMENAZA',
+      input: `<input class="form-input" type="text" id="field-threat-type" name="threat_type" value="${escapeHtml(e.threat_type || '')}" placeholder="BIOTERRORISMO...">` })}
+  </div>
+  ${createFormGroup({ id: 'field-registered-platforms', label: 'PLATAFORMAS REGISTRADAS',
+    input: `<input class="form-input" type="text" id="field-registered-platforms" name="registered_platforms" value="${escapeHtml(e.registered_platforms || '')}" placeholder="PS4, PS5, PC, SWITCH...">` })}
+</div>`;
+
+  return [identSection, dataSection, classSection, descSection, extendedSection].join('\n');
 }
 
 export function createArchiveFormActions({
