@@ -191,6 +191,14 @@
   color: var(--text-main);
 }
 
+.card__title a {
+  color: inherit;
+}
+
+.card__title a:hover {
+  color: var(--text-soft);
+}
+
 .card__footer {
   margin-top: var(--space-3);
   padding-top: var(--space-3);

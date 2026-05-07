@@ -414,6 +414,19 @@
 }
 
 /* ================================================================
+   ARCHIVE FORM PREVIEW — cover image inside panel context
+   El selector .card--cover .card__cover no aplica fuera de una card.
+   ================================================================ */
+.archive-form__preview .card__cover {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  background-color: var(--bg-panel-dark);
+  border-radius: var(--radius-input);
+}
+
+/* ================================================================
    FORM PAGES (CREATE / EDIT)
    ================================================================ */
 .form-page {
