@@ -524,3 +524,57 @@
 
 .toast--enter { animation: toast-in  var(--transition-base) forwards; }
 .toast--exit  { animation: toast-out var(--transition-base) forwards; }
+
+/* ================================================================
+   RESPONSIVE — Layouts de página
+   ================================================================ */
+
+/* 980px — colapsar layouts de dos paneles paralelos */
+@media (max-width: 980px) {
+  /* Archive list: panel lateral baja al fondo */
+  .archive-page {
+    grid-template-columns: 1fr;
+  }
+  .archive-page__side {
+    position: static;
+  }
+
+  /* Detail hero: portada encima de la meta */
+  .game-detail__hero {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .game-detail__cover,
+  .game-detail__cover-placeholder {
+    width: 160px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Rating form: columna única */
+  .rating-form__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 760px — ajustes de status strip y labels de datos */
+@media (max-width: 760px) {
+  /* Status strip: ocultar lado derecho para evitar overflow */
+  .status-strip {
+    overflow: hidden;
+  }
+  .status-strip__right {
+    display: none;
+  }
+
+  /* Reducir ancho mínimo de labels en filas de datos del detalle */
+  .detail-data-label {
+    min-width: 120px;
+  }
+
+  /* Toast: ajustar ancho máximo */
+  .toast {
+    min-width: 200px;
+    max-width: calc(100vw - var(--space-12));
+  }
+}

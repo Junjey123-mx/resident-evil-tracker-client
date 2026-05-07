@@ -504,3 +504,24 @@
 .form-validation-summary__item::before {
   content: '▸ ';
 }
+
+/* ================================================================
+   RESPONSIVE — Grids de formularios
+   ================================================================ */
+
+/* 980px — preview del formulario baja al fondo */
+@media (max-width: 980px) {
+  .archive-form__grid {
+    grid-template-columns: 1fr;
+  }
+  .archive-form__preview {
+    position: static;
+  }
+}
+
+/* 760px — filas de dos columnas a una sola columna */
+@media (max-width: 760px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -153,3 +153,27 @@
   color: var(--text-muted);
   white-space: nowrap;
 }
+
+/* ================================================================
+   RESPONSIVE — Layout global y grid system
+   Targets: tablet mediana (≤980px), tablet pequeña (≤760px).
+   En 1366px, 1440px y 1920px no se necesitan ajustes.
+   ================================================================ */
+
+/* 980px — reducir grids de 3 y 4 columnas */
+@media (max-width: 980px) {
+  .grid--3 { grid-template-columns: repeat(2, 1fr); }
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* 760px — colapsar grids anchos, reducir padding de página */
+@media (max-width: 760px) {
+  .page__content {
+    padding: var(--space-4);
+  }
+
+  .grid--2    { grid-template-columns: 1fr; }
+  .grid--3    { grid-template-columns: 1fr; }
+  .grid--4    { grid-template-columns: repeat(2, 1fr); }
+  .stats-row  { grid-template-columns: repeat(2, 1fr); }
+}
