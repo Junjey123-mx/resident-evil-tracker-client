@@ -11,10 +11,38 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+const ACTION_LABELS = {
+  'rating_updated': 'SE ACTUALIZÓ EL RATING',
+  'rating_created': 'SE AGREGÓ UN RATING',
+  'rating_deleted': 'SE ELIMINÓ UN RATING',
+  'cover_uploaded': 'IMAGEN SUBIDA',
+  'cover_updated':  'IMAGEN ACTUALIZADA',
+  'game_created':   'REGISTRO CREADO',
+  'game_updated':   'REGISTRO ACTUALIZADO',
+  'game_deleted':   'REGISTRO ELIMINADO',
+};
+
+function normalizeActionKey(value) {
+  if (!value) return '';
+  return String(value).trim().replace(/[\s\-]+/g, '_').toLowerCase();
+}
+
+function humanizeAction(item) {
+  const keyFromAction = normalizeActionKey(item.action);
+  if (keyFromAction && ACTION_LABELS[keyFromAction]) return ACTION_LABELS[keyFromAction];
+
+  const keyFromLabel = normalizeActionKey(item.action_label);
+  if (keyFromLabel && ACTION_LABELS[keyFromLabel]) return ACTION_LABELS[keyFromLabel];
+
+  const raw = item.action || item.action_label || '';
+  if (!raw) return 'ACTIVIDAD DEL ARCHIVO';
+  return raw.replace(/[_\s\-]+/g, ' ').trim().toUpperCase();
+}
+
 export function createActivityMessage(item) {
   if (!item) return '';
 
-  const action  = escapeHtml(item.action_label || item.action || 'ACCIÓN');
+  const action  = escapeHtml(humanizeAction(item));
   const message = escapeHtml(formatText(item.message, ''));
   const entity  = item.series_title ? `<span class="activity-item__entity">${escapeHtml(item.series_title)}</span>` : '';
 

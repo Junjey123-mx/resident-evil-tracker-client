@@ -3,16 +3,14 @@ export function getCurrentPage() {
   if (file === '' || file === 'index.html') return 'dashboard';
   if (file === 'games.html') return 'games';
   if (file === 'game-detail.html') return 'games';
-  if (file === 'create-game.html') return 'create';
   if (file === 'edit-game.html') return 'games';
   return 'dashboard';
 }
 
 export function createSidebar(activePage) {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard',       href: 'index.html' },
-    { id: 'games',     label: 'Archivo',          href: 'games.html' },
-    { id: 'create',    label: 'Nuevo Registro',   href: 'create-game.html' },
+    { id: 'dashboard', label: 'Dashboard', href: 'index.html' },
+    { id: 'games',     label: 'Archivo',   href: 'games.html' },
   ];
 
   const navLinks = navItems
@@ -40,8 +38,8 @@ export function createSidebar(activePage) {
       </div>
     </nav>
     <div class="sidebar__footer">
-      <div>API REST MODE</div>
-      <div>VANILLA CLIENT</div>
+      <div>ARCHIVE TERMINAL</div>
+      <div>SISTEMA ACTIVO</div>
     </div>
   `;
 }

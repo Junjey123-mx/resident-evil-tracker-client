@@ -13,6 +13,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
   background-color: var(--bg-panel-dark);
   border-right: var(--border-base) solid var(--border-muted);
@@ -34,7 +35,7 @@
 .page__content {
   flex: 1;
   padding: var(--space-6);
-  max-width: var(--content-max-width);
+  max-width: none;
   width: 100%;
 }
 
@@ -49,7 +50,7 @@
 .grid--2    { grid-template-columns: repeat(2, 1fr); }
 .grid--3    { grid-template-columns: repeat(3, 1fr); }
 .grid--4    { grid-template-columns: repeat(4, 1fr); }
-.grid--auto { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.grid--auto { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 
 .stats-row {
   display: grid;
@@ -154,19 +155,12 @@
   white-space: nowrap;
 }
 
-/* ================================================================
-   RESPONSIVE — Layout global y grid system
-   Targets: tablet mediana (≤980px), tablet pequeña (≤760px).
-   En 1366px, 1440px y 1920px no se necesitan ajustes.
-   ================================================================ */
-
-/* 980px — reducir grids de 3 y 4 columnas */
 @media (max-width: 980px) {
   .grid--3 { grid-template-columns: repeat(2, 1fr); }
   .grid--4 { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* 760px — colapsar grids anchos, reducir padding de página */
+
 @media (max-width: 760px) {
   .page__content {
     padding: var(--space-4);

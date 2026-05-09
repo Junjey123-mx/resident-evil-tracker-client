@@ -11,7 +11,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-export function createArchiveGrid(entries = []) {
+export function createArchiveGrid(entries = [], options = {}) {
   if (!entries || entries.length === 0) {
     return createEmptyState({
       title:       'ARCHIVO VACÍO',
@@ -22,7 +22,7 @@ export function createArchiveGrid(entries = []) {
     });
   }
 
-  const cards = entries.map(e => createArchiveCard(e)).join('');
+  const cards = entries.map(e => createArchiveCard(e, options)).join('');
   return `<div class="grid grid--auto">${cards}</div>`;
 }
 

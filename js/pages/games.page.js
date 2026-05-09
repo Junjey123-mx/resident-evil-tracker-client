@@ -20,7 +20,7 @@ mountSidebar({ activePage: 'games' });
 mountStatusStrip({ pageLabel: 'ARCHIVO' });
 
 // ------------------------------------------------------------------ Defaults
-const DEFAULTS = { q: '', sort: 'title', order: 'asc', page: 1, limit: 8 };
+const DEFAULTS = { q: '', sort: 'title', order: 'asc', page: 1, limit: 5 };
 
 // ------------------------------------------------------------------ Helpers
 function escapeHtml(value) {
@@ -34,10 +34,13 @@ function escapeHtml(value) {
 }
 
 // ------------------------------------------------------------------ URL params
+const VALID_SORT_FIELDS = new Set(['title', 'release_year', 'chronology_order', 'rating', 'created_at']);
+
 function readParams() {
+  const rawSort = getQueryParam('sort', DEFAULTS.sort);
   return {
     q:     getQueryParam('q',     DEFAULTS.q),
-    sort:  getQueryParam('sort',  DEFAULTS.sort),
+    sort:  VALID_SORT_FIELDS.has(rawSort) ? rawSort : DEFAULTS.sort,
     order: getQueryParam('order', DEFAULTS.order),
     page:  getNumberQueryParam('page',  DEFAULTS.page),
     limit: getNumberQueryParam('limit', DEFAULTS.limit),
@@ -68,7 +71,7 @@ function buildOrderOptions(current) {
 }
 
 function buildLimitOptions(current) {
-  return [8, 12, 16, 24].map(n =>
+  return [5, 10, 15, 20].map(n =>
     `<option value="${n}"${current === n ? ' selected' : ''}>${n} POR PÁGINA</option>`
   ).join('');
 }
@@ -143,13 +146,10 @@ function buildSidePanel(params, { total, pages }) {
         <span class="archive-count__num">${params.limit}</span>
       </div>
       <div class="split">
-        <span class="label">ORDENADO POR</span>
-        <span class="archive-count__num">${escapeHtml(params.sort)} ${escapeHtml(params.order)}</span>
+        <span class="label">RESPONSABLE DEL ARCHIVO</span>
+        <span class="archive-count__num">Vernel Josue Hernández Cáceres</span>
       </div>
       ${q ? `<div class="split"><span class="label">BÚSQUEDA</span><span class="archive-count__num">${q}</span></div>` : ''}
-    </div>
-    <div class="panel__footer">
-      <a href="create-game.html" class="btn btn--primary btn--sm">+ NUEVO REGISTRO</a>
     </div>
   </div>
   <div class="panel">

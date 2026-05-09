@@ -94,6 +94,16 @@ function buildTimeline(timeline) {
   return `<ul class="timeline-list">${rows}</ul>`;
 }
 
+function getEntryRating(entry) {
+  return entry.rating_score
+    ?? entry.average_rating
+    ?? entry.personal_rating
+    ?? entry.score
+    ?? entry.rating
+    ?? entry.rating_value
+    ?? null;
+}
+
 function buildTopRated(entries) {
   if (!Array.isArray(entries) || entries.length === 0) {
     return createEmptyState({
@@ -108,7 +118,7 @@ function buildTopRated(entries) {
     const year  = entry.release_year
       ? `<span class="label">${escapeHtml(formatYear(entry.release_year))}</span>`
       : '';
-    const score = entry.display_score ?? entry.rating_score ?? entry.score ?? null;
+    const score = getEntryRating(entry);
     const badge = createRatingBadge(score);
     return `<li class="top-rated-item">
   <div class="top-rated-item__left">
@@ -152,7 +162,7 @@ async function initDashboard() {
   ${buildStats(stats)}
   ${sectionPanel(
     'REGISTROS RECIENTES',
-    createArchiveGrid(recentEntries),
+    createArchiveGrid(recentEntries, { compact: true }),
     '<a href="games.html" class="btn btn--ghost btn--sm">VER TODOS LOS REGISTROS</a>'
   )}
   <div class="grid grid--2">
