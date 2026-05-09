@@ -10,23 +10,14 @@ Cliente web estático para consumir la API REST del **Resident Evil Franchise Tr
 |---|---|
 | Frontend GitHub | https://github.com/Junjey123-mx/resident-evil-tracker-client |
 | Backend GitHub | https://github.com/Junjey123-mx/resident-evil-tracker-api |
-| Frontend publicado | PENDIENTE_AGREGAR_LINK_NETLIFY |
-| Backend publicado | PENDIENTE_AGREGAR_LINK_RENDER_O_RAILWAY |
+| Frontend publicado | http://158.23.57.118/vernel/resident-evil-tracker-client/ |
+| Backend publicado | https://resident-evil-tracker-api-byct.vercel.app |
 
 ---
 
 ## Screenshot de la aplicación
 
-> Agregar capturas de pantalla en `assets/screenshots/` y referenciarlas aquí antes de la entrega.
-
-| Dashboard | Archivo de juegos |
-|---|---|
-| *(pendiente — agregar screenshot)* | *(pendiente — agregar screenshot)* |
-
-| Detalle de juego | Formulario de creación |
-|---|---|
-| *(pendiente — agregar screenshot)* | *(pendiente — agregar screenshot)* |
-
+![Screenshot de la aplicación](assets/screenshots/resident.png)
 ---
 
 ## Stack usado
@@ -38,7 +29,7 @@ Cliente web estático para consumir la API REST del **Resident Evil Franchise Tr
 | JavaScript vanilla con ES Modules | Lógica del cliente |
 | Fetch API nativa | Comunicación con el backend |
 | DOM API | Renderizado y eventos |
-| Netlify | Hosting estático recomendado |
+| Azure (servidor Apache) | Hosting estático del frontend |
 | FastAPI (backend externo) | API REST que consume el frontend |
 | PostgreSQL (en backend) | Persistencia de datos |
 | Cloudinary (manejado desde backend) | Almacenamiento de portadas |
@@ -240,25 +231,26 @@ Este proyecto implementa una arquitectura completamente desacoplada:
 
 ## Reflexión sobre la tecnología y los challenges
 
-Construir un frontend completamente en JavaScript vanilla con ES Modules fue un ejercicio directo para entender qué resuelven los frameworks por defecto: el ciclo de renderizado, la gestión del estado local, el enrutamiento y el manejo de efectos secundarios. Sin esas abstracciones, cada decisión arquitectónica es explícita y visible.
+Construir un frontend completamente en JavaScript vanilla con ES Modules fue un ejercicio directo para entender qué resuelven los frameworks por defecto, siendo el ciclo de renderizado, la gestión del estado local, el enrutamiento y el manejo de efectos secundarios. 
 
-El mayor reto fue mantener consistencia entre capas sin componentes reactivos: cualquier cambio de datos requiere un re-render manual y explícito. La separación en `core`, `services`, `components` y `pages` resultó ser la estructura correcta para mantener el código predecible y cada archivo con una responsabilidad única.
+El mayor reto fue mantener consistencia entre capas sin componentes reactivos, ya que cualquier cambio de datos requiere un re-render manual y explícito. La separación en `core`, `services`, `components` y `pages` resultó ser la estructura correcta para mantener el código predecible y cada archivo con una responsabilidad única.
 
-`fetch()` con `AbortController` para timeouts y un `ApiError` con status HTTP fue suficiente para manejar todos los casos de error de forma uniforme en toda la app. La ausencia de dependencias externas simplificó enormemente el deploy: el frontend es un conjunto de archivos que cualquier servidor estático puede servir sin configuración especial.
+`fetch()` con `AbortController` para timeouts y un `ApiError` con status HTTP fue suficiente para manejar todos los casos de error de forma uniforme en toda la app. La ausencia de dependencias externas simplificó enormemente el deploy en el frontend es un conjunto de archivos que cualquier servidor estático puede servir sin configuración técnica profunda.
 
-La integración con el backend fue fluida una vez definidos los contratos de los endpoints. El punto más delicado fue garantizar que los valores enviados en formularios coincidieran exactamente con los literales que el backend valida, lo que reforzó la importancia de revisar los contratos de API antes de construir el cliente.
+La integración con el backend no fue tan complicada de implementar una vez definidos los contratos de los endpoints. El punto más delicado fue que los valores enviados en formularios coincidieran exactamente con los literales que el backend valida, lo cual reforzó la importancia de revisar dichas rutas de las APIs antes de construir el cliente.
 
 ---
 
-## Deploy en Netlify
+## Deploy en Azure (Apache)
 
-1. Conectar el repositorio de GitHub en Netlify.
-2. No configurar build command (el proyecto no tiene build step).
-3. Publicar directamente desde la raíz del repositorio.
-4. Para apuntar al backend publicado: inyectar `window.__RESIDENT_EVIL_API_BASE_URL__ = 'URL_DEL_BACKEND'` en el HTML antes de cargar los scripts, o configurarlo en Netlify como variable de entorno si se usa un `_redirects` o función edge.
-5. Agregar el dominio de Netlify a la variable `BACKEND_CORS_ORIGINS` en el backend.
+El frontend está hosteado como sitio estático en un servidor Apache en Azure.
 
-**URL frontend publicado:** `PENDIENTE_AGREGAR_LINK_NETLIFY`
+1. Copiar los archivos del repositorio al directorio del servidor web.
+2. No requiere build step ni configuración adicional — Apache sirve los archivos directamente.
+3. La URL del backend ya está configurada en `js/core/config.js` apuntando a Vercel.
+4. Asegurarse de que el origen del servidor Apache esté incluido en `BACKEND_CORS_ORIGINS` del backend.
+
+**URL frontend publicado:** http://158.23.57.118/vernel/resident-evil-tracker-client/
 
 ---
 
