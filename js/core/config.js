@@ -1,7 +1,7 @@
 export const API_BASE_URL =
   (typeof window !== 'undefined' && window.__RESIDENT_EVIL_API_BASE_URL__)
     ? window.__RESIDENT_EVIL_API_BASE_URL__
-    : 'http://localhost:8000';
+    : 'https://resident-evil-tracker-api-byct.vercel.app/';
 
 export const CLIENT_ENV =
   (typeof window !== 'undefined' && window.__RESIDENT_EVIL_ENV__)
